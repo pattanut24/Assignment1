@@ -22,15 +22,14 @@ router.post('/todos', async(req,res)=>{
             {order:maxorder,title: body.title}
         ])
 
-        console.log(ans)
         res.json({
             success: true , 
             data: ans[0]
         })
     }catch(e){
-        console.log("error") 
         res.status(400).json({
-            error: e
+            success: false, 
+            error: "add failed"
         })
     }
 })
@@ -46,9 +45,9 @@ router.get('/todos/:id', async(req,res)=>{
             data: ans[0]
         }) 
     }catch(e){
-        console.log('error')
         res.status(400).json({
-            error:e
+            success: false, 
+            error: "get data failed"
         })
     }   
 })
@@ -57,8 +56,9 @@ router.put('/todos/:id', async(req,res) =>{
     try{
         var params = req.params.id
         var body = req.body 
-        console.log(body)
-
+        if (body.title === undefined){
+            throw new error("wrong title")
+        }
         var ans = await todo.findByIdAndUpdate(params,{
             title: body.title 
         },{new:true}) 
@@ -68,9 +68,9 @@ router.put('/todos/:id', async(req,res) =>{
             data: ans
         })
     }catch(e){
-        console.log(e)
         res.status(400).json({
-            error:e
+            success: false, 
+            error: "update failed"
         })
     }
 })
@@ -79,16 +79,15 @@ router.delete('/todos/:id', async(req,res) =>{
     try{
         var params = req.params.id 
         var ans = await todo.deleteOne({ _id : params })
-        console.log(ans)
         
         res.json({
             success:true, 
             data:{}
         })
     }catch(e){
-        console.log('error')
         res.status(400).json({
-            error:e
+            success: false, 
+            error: "delete failed"
         })
     }
 })
